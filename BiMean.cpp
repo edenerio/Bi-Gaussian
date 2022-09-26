@@ -1,6 +1,9 @@
+#ifndef BIMEAN
+#define BIMEAN
 #include <fstream>
 #include <math.h>
 #include <tgmath.h>
+
 using namespace std;
 
 class BiMean {
@@ -25,6 +28,10 @@ class BiMean {
         GaussGraph[maxVal+1][maxHeight+1] = {};
         offSet = (maxVal-minVal)/10;
         dividePt = offSet;
+    }
+
+    ~BiMean(){
+
     }
 
     int loadHist(int *in){
@@ -108,7 +115,6 @@ class BiMean {
         //ALGO IN SPECS
         double sum1, sum2;
         double total = 0;
-        double minSumDiff = 0;
         double bestThr = dividePt;
         double minSumDiff = 999999.0;
 
@@ -154,3 +160,5 @@ class BiMean {
         //overlay histGraph with add vertical line and GaussGraph to File1
     }
 };
+
+#endif
