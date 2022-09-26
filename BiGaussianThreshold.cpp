@@ -19,18 +19,17 @@ class BiMean {
         char **histGraph;
         char **GaussGraph;
 
-    BiMean(int rows, int cols, int minval, int maxval){
+    BiMean(int rows, int cols, int minv, int maxv){
         numRows = rows;
         numCols = cols;
-        minVal = minval;
-        maxVal = maxval;
-        //maxHeight = maxheight;
+        minVal = minv;
+        maxVal = maxv;
         //maxGVal = maxgval;
-        histAry[maxval+1] = {};
-        GaussAry[maxval+1] = {};
-        //histGraph[maxval+1][maxHeight+1] = {};
-        //GaussGraph[maxval+1][maxHeight+1] = {};
-        offSet = (maxval-minval)/10;
+        histAry[maxv+1] = {};
+        GaussAry[maxv+1] = {};
+        //histGraph[maxv+1][maxHeight+1] = {};
+        //GaussGraph[maxv+1][maxHeight+1] = {};
+        offSet = (maxv-minv)/10;
         dividePt = offSet;
     }
 
@@ -38,8 +37,16 @@ class BiMean {
 
     }
 
-    int loadHist(int *in){
-        histAry = in;
+    int loadHist(ifstream& in){
+        if(in.is_open()){
+            while(!in.eof()){
+                int x;
+                int y;
+                in >> x;
+                in >> y;
+                histAry[x] = y;
+            }
+        }
         int len = *(&histAry + 1) - histAry;
         int retVal = histAry[0];
         for(int i=0; i<len; i++){
@@ -48,6 +55,11 @@ class BiMean {
             }
         }
         return retVal;
+    }
+
+    void allocateArrs(){
+        histGraph[maxVal+1][maxHeight+1] = {};
+        GaussGraph[maxVal+1][maxHeight+1] = {};
     }
 
     void plotGraph(int *ary, int **graph, char symbol){
@@ -167,6 +179,11 @@ class BiMean {
 
 int main(int argc, char *argv[]){
     //read from a file
+    if(argc != 3){
+        cout << "Invalid arguments" << endl;
+        return 1;
+    }
+
     ifstream inFile(argv[1]);
 
     ofstream outFile1;
@@ -185,6 +202,11 @@ int main(int argc, char *argv[]){
     }
 
     BiMean biMean(row,col,minval,maxval);
-    outFile1 << "ran well" << endl;
+
+    biMean.maxHeight = biMean.loadHist(inFile);;
+
+    //Step 3
+    biMean.allocateArrs();
+
     return 0;
 }

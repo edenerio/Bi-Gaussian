@@ -9,7 +9,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/BiGaussianThreshold.exe",
-            "args": ["BiGaussianThreshold.txt", "outfile1.txt", "outfile2.txt"],
+            "args": ["BiGauss_data1.txt", "outfile1.txt", "outfile2.txt"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
