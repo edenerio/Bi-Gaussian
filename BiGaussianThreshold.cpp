@@ -25,43 +25,54 @@ class BiMean {
     }
 
     int loadHist(ifstream& in){
-        if(in.is_open()){
-            while(!in.eof()){
-                int x;
-                int y;
-                in >> x;
-                in >> y;
-                histAry[x] = y;
+        int retVal = 0;
+        while(!in.eof()){
+            int x;
+            int y;
+            in >> x;
+            in >> y;
+            histAry[x] = y;
+            if(retVal < y){
+                retVal = y;
             }
         }
-        int len = *(&histAry + 1) - histAry;
-        int retVal = histAry[0];
-        for(int i=0; i<len; i++){
-            if(retVal<histAry[i]){
-                retVal = histAry[i];
-            }
-        }
+        cout << retVal << endl;
         return retVal;
     }
 
     void allocateArrs(){
-        cout << "allocateArrs()" << endl;
         histGraph[maxVal+1][maxHeight+1];
-        cout << "histGraph created" << endl;
         GaussGraph[maxVal+1][maxHeight+1];
-        cout << "GaussGraph created" << endl;
         GaussAry[maxVal+1];
-        cout << "GaussAry created" << endl;
     }
 
-    void plotGraph(int *ary, int **graph, char symbol){
+    void plotGraph(int *ary, char **graph, char symbol){
         //maps 1D array onto 2D array with symbol
         //if ary[i] > 0 then graph[i, ary[i]] <- symbol
         //symbol will be * for histGraph and + for GaussGraph
+        /*
+            FIX THIS FUNCTION!!
+        */
+        for(int i = 0; i<numRows; i++){
+            if(ary[i] > 0){
+                graph[i][ary[i]] = symbol;
+            }else{
+                graph[i][ary[i]] = ' ';
+            }
+        }
+        for(int i = 0; i<numRows; i++){
+            for(int j=0; j<numCols; j++){
+                cout << graph[i][j];
+            }
+            cout << endl;
+        }
     }
 
-    void addVertical(){
+    void addVertical(int thr){
         //add histGraph[thr, j] with | where j=0 to maxHeight
+        for(int i=0; i<=maxHeight; i++){
+            histGraph[thr][i] = '|';
+        }
     }
 
     double computeMean(int leftIndex, int rightIndex, int x){
@@ -84,7 +95,6 @@ class BiMean {
     }
 
     double computeVar(int leftIndex, int rightIndex, int x){
-
         //weight = weight of variance
         //ALGO IN SPECS
         double sum = 0.0;
@@ -198,12 +208,43 @@ int main(int argc, char *argv[]){
         cout << "Input File not found!" << endl;
         return 2;
     }
+    
     BiMean biMean = BiMean(row,col,minval,maxval);
     biMean.maxHeight = biMean.loadHist(inFile);
-
+    
     //Step 3
     biMean.allocateArrs();
 
+    //Step 4
+    biMean.plotGraph(biMean.histAry, biMean.histGraph, '*');
+    outFile1 << biMean.histGraph;
+
+
+    //Step 5
+    //Done on class BiMean construction
+    //offSet and dividePt value assignment
+
+    //Step 6
+    double bestThrVal = biMean.biMeanGauss(biMean.dividePt, outFile2);
+
+    //Step 7
+    biMean.bestFitGauss(bestThrVal, biMean.GaussAry);
+
+    //Step 8
+    biMean.plotGraph(biMean.GaussAry, biMean.GaussGraph, '+');
+    outFile1 << biMean.GaussGraph;
+
+    //Step 9
+    outFile1 << "Best Threshol Value: " << bestThrVal;
+
+    //Step 10
+    biMean.addVertical(bestThrVal);
+    outFile1 << biMean.histGraph;
+
+    //Step 11
+    //outFile1 << biMean.plotAll()
+
+    //Step 12
     inFile.close();
     outFile1.close();
     outFile2.close();
