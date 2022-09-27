@@ -5,15 +5,10 @@
 
 using namespace std;
 
-#include <math.h>
-#include <tgmath.h>
-
-using namespace std;
-
 class BiMean {
     public:
-        int numRows, numCols, minVal, maxVal, maxHeight, maxGVal;
-        int offSet, dividePt;
+        int numRows, numCols, minVal, maxVal, maxHeight;
+        double offSet, dividePt;
         int *histAry;
         int *GaussAry;
         char **histGraph;
@@ -24,17 +19,9 @@ class BiMean {
         numCols = cols;
         minVal = minv;
         maxVal = maxv;
-        //maxGVal = maxgval;
         histAry[maxv+1] = {};
-        GaussAry[maxv+1] = {};
-        //histGraph[maxv+1][maxHeight+1] = {};
-        //GaussGraph[maxv+1][maxHeight+1] = {};
         offSet = (maxv-minv)/10;
         dividePt = offSet;
-    }
-
-    ~BiMean(){
-
     }
 
     int loadHist(ifstream& in){
@@ -58,8 +45,13 @@ class BiMean {
     }
 
     void allocateArrs(){
-        histGraph[maxVal+1][maxHeight+1] = {};
-        GaussGraph[maxVal+1][maxHeight+1] = {};
+        cout << "allocateArrs()" << endl;
+        histGraph[maxVal+1][maxHeight+1];
+        cout << "histGraph created" << endl;
+        GaussGraph[maxVal+1][maxHeight+1];
+        cout << "GaussGraph created" << endl;
+        GaussAry[maxVal+1];
+        cout << "GaussAry created" << endl;
     }
 
     void plotGraph(int *ary, int **graph, char symbol){
@@ -134,10 +126,10 @@ class BiMean {
         double bestThr = dividePt;
         double minSumDiff = 999999.0;
 
-        while(dividePt  < (maxGVal - offSet)){
+        while(dividePt  < (maxVal - offSet)){
             GaussAry = setZero(GaussAry);
             sum1 = fitGauss(0, dividePt, GaussAry);
-            sum2 = fitGauss(dividePt, maxGVal, GaussAry);
+            sum2 = fitGauss(dividePt, maxVal, GaussAry);
             total = sum1+sum2;
             if(total < minSumDiff){
                 minSumDiff = total;
@@ -179,12 +171,14 @@ class BiMean {
 
 int main(int argc, char *argv[]){
     //read from a file
-    if(argc != 3){
+    if(argc != 4){
         cout << "Invalid arguments" << endl;
         return 1;
     }
 
-    ifstream inFile(argv[1]);
+    //ifstream inFile(argv[1]);
+    ifstream inFile;
+    inFile.open(argv[1]);
 
     ofstream outFile1;
     outFile1.open(argv[2]);
@@ -200,13 +194,18 @@ int main(int argc, char *argv[]){
         inFile >> minval;
         inFile >> maxval;
     }
-
-    BiMean biMean(row,col,minval,maxval);
-
-    biMean.maxHeight = biMean.loadHist(inFile);;
+    else{
+        cout << "Input File not found!" << endl;
+        return 2;
+    }
+    BiMean biMean = BiMean(row,col,minval,maxval);
+    biMean.maxHeight = biMean.loadHist(inFile);
 
     //Step 3
     biMean.allocateArrs();
 
+    inFile.close();
+    outFile1.close();
+    outFile2.close();
     return 0;
 }
