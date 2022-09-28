@@ -2,6 +2,7 @@
 #include <fstream>
 #include <math.h>
 #include <tgmath.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -13,15 +14,18 @@ class BiMean {
         int *GaussAry;
         char **histGraph;
         char **GaussGraph;
+        int *smoothHist;
 
     BiMean(int rows, int cols, int minv, int maxv){
         numRows = rows;
         numCols = cols;
         minVal = minv;
         maxVal = maxv;
-        histAry = new int[maxv+1];
+        histAry = new int[maxv+1]();
+        GaussAry = new int[maxv+1]();
+        smoothHist = new int[maxv+1]();
         offSet = (maxv-minv)/10;
-        dividePt = offSet;
+        dividePt = (maxv-minv)/10;
     }
 
     ~BiMean(){
@@ -62,7 +66,6 @@ class BiMean {
             histGraph[i] = new char[maxVal+1]();
             GaussGraph[i] = new char[maxVal+1]();
         }
-        GaussAry = new int[maxVal+1];
     }
 
     void plotGraph(int *ary, char **graph, char symbol){
@@ -113,8 +116,8 @@ class BiMean {
         double sq;
         
         for(int i=leftIndex; i<rightIndex; i++){
-            sq = double(i - x) * double(i - x);
-            sum += (double(histAry[i]) * sq);
+            sq = (double)(i - x) * (double)(i - x);
+            sum += ((double)histAry[i] * sq);
             numPixels += histAry[i];
         }
 
@@ -126,14 +129,13 @@ class BiMean {
         //NOT DONE
         double n = (x-mean) * (x-mean);
         double c = var * var;
-        double e = (-(n/(2*c)));
+        double e = ((-1)*(n/(2*c)));
         return double(maxheight * exp(e));
     }
 
     int* setZero(int *arr){
         //set array to zero
-        int len = *(&arr + 1) - arr;
-        for(int i=0; i<len; i++){
+        for(int i=0; i<maxVal; i++){
             arr[i] = 0;
         }
         return arr;
@@ -142,23 +144,31 @@ class BiMean {
     double biMeanGauss(int thr, ofstream& outFile){
         //determines the best threshold selection via fitGauss method
         //ALGO IN SPECS
-        double sum1, sum2;
-        double total = 0;
-        double bestThr = dividePt;
+        double sum1, sum2, total;
+        double bestThr = thr;
         double minSumDiff = 999999.0;
+        int count = 1;
 
-        while(dividePt  < (maxVal - offSet)){
-            cout << "while" << " ";
+        while(thr  < (maxVal - offSet)){
+            cout << "iteration#: " << count++ << endl;
             GaussAry = setZero(GaussAry);
-            sum1 = fitGauss(0, dividePt, GaussAry);
-            sum2 = fitGauss(dividePt, maxVal, GaussAry);
+            sum1 = fitGauss(0, thr, GaussAry);
+            for(int i=0; i<maxVal; i++){
+                cout << GaussAry[i] << " ";
+            }
+            cout << endl;
+            sum2 = fitGauss(thr, maxVal, GaussAry);
+            for(int i=0; i<maxVal; i++){
+                cout << GaussAry[i] << " ";
+            }
+            cout << endl;
             total = sum1+sum2;
             if(total < minSumDiff){
                 minSumDiff = total;
-                bestThr = dividePt;
+                bestThr = thr;
             }
-            outFile << dividePt << " " << sum1 << " " << sum2 << " " << total << " " << minSumDiff << " " << bestThr << endl;
-            dividePt++;
+            outFile << thr << " " << sum1 << " " << sum2 << " " << total << " " << minSumDiff << " " << bestThr << endl;
+            thr++;
         }
         return bestThr;
     }
@@ -169,11 +179,10 @@ class BiMean {
         double var = computeVar(leftIndex, rightIndex, mean);
         double sum = 0.0;
         double Gval;
-        double maxGval = 0;
         for(int i=leftIndex; i<=rightIndex; i++){
             Gval = modifiedGauss(i, mean, var, maxHeight);
             sum += abs(Gval-(double)histAry[i]);
-            GaussAry[i] = int(Gval);
+            arr[i] = (int)Gval;
         }
         return sum;
     }
@@ -252,6 +261,7 @@ int main(int argc, char *argv[]){
     biMean.bestFitGauss(bestThrVal, biMean.GaussAry);
 
     //Step 8
+    cout << endl;
     biMean.plotGraph(biMean.GaussAry, biMean.GaussGraph, '+');
     //outFile1 << biMean.GaussGraph;
     for(int i = 0; i<biMean.maxHeight; i++){
