@@ -72,9 +72,9 @@ class BiMean {
         //maps 1D array onto 2D array with symbol
         //if ary[i] > 0 then graph[i, ary[i]] <- symbol
         //symbol will be * for histGraph and + for GaussGraph
-        for(int i = 0; i<maxVal; i++){
+        for(int i = 0; i<=maxVal; i++){
             if(ary[i] > 0){
-                int point = (maxHeight+1)-ary[i];
+                int point = maxHeight-ary[i];
                 for(int j=point; j<maxHeight; j++){
                     graph[j][i] = symbol;
                 }
@@ -128,8 +128,7 @@ class BiMean {
         //instructions at specs
         //NOT DONE
         double n = (x-mean) * (x-mean);
-        double c = var * var;
-        double e = ((-1)*(n/(2*c)));
+        double e = (-(n/(2*var)));
         return double(maxheight * exp(e));
     }
 
@@ -195,8 +194,27 @@ class BiMean {
         sum2 = fitGauss(bestThr, maxVal, arr);
     }
 
-    void plotAll(){
+    void plotAll(ofstream& outFile){
         //overlay histGraph with add vertical line and GaussGraph to File1
+        for(int i = 0; i<maxHeight; i++){
+            for(int j=0; j<maxVal; j++){
+                if((int)histGraph[i][j]>0 && (int)GaussGraph[i][j]>0){
+                    outFile << 'x' << " ";
+                }else{
+                    if((int)histGraph[i][j]>0){
+                        outFile << histGraph[i][j] << " ";
+                    }
+                    if((int)GaussGraph[i][j]>0){
+                        outFile << GaussGraph[i][j] << " ";
+                    }
+                }
+                if((int)histGraph[i][j]==0 && (int)GaussGraph[i][j]==0){
+                    outFile << "  ";
+                }
+                //outFile << " ";
+            }
+            outFile << endl;
+        }
     }
 };
 
@@ -242,8 +260,8 @@ int main(int argc, char *argv[]){
     //outFile1 << biMean.histGraph;
     for(int i = 0; i<biMean.maxHeight; i++){
         for(int j=0; j<biMean.maxVal; j++){
-            if((int)biMean.histGraph[i][j]==0) outFile1 << " ";
-            else outFile1 << biMean.histGraph[i][j];
+            if((int)biMean.histGraph[i][j]==0) outFile1 << "  ";
+            else outFile1 << biMean.histGraph[i][j] << " ";
         }
         outFile1 << endl;
     }
@@ -261,13 +279,12 @@ int main(int argc, char *argv[]){
     biMean.bestFitGauss(bestThrVal, biMean.GaussAry);
 
     //Step 8
-    cout << endl;
     biMean.plotGraph(biMean.GaussAry, biMean.GaussGraph, '+');
     //outFile1 << biMean.GaussGraph;
     for(int i = 0; i<biMean.maxHeight; i++){
         for(int j=0; j<biMean.maxVal; j++){
-            if((int)biMean.GaussGraph[i][j]==0) outFile1 << " ";
-            else outFile1 << biMean.GaussGraph[i][j];
+            if((int)biMean.GaussGraph[i][j]==0) outFile1 << "  ";
+            else outFile1 << biMean.GaussGraph[i][j] << " ";
         }
         outFile1 << endl;
     }
@@ -280,14 +297,14 @@ int main(int argc, char *argv[]){
     biMean.addVertical(bestThrVal);
     for(int i = 0; i<biMean.maxHeight; i++){
         for(int j=0; j<biMean.maxVal; j++){
-            if((int)biMean.histGraph[i][j]==0) outFile1 << " ";
-            else outFile1 << biMean.histGraph[i][j];
+            if((int)biMean.histGraph[i][j]==0) outFile1 << "  ";
+            else outFile1 << biMean.histGraph[i][j] << " ";
         }
         outFile1 << endl;
     }
 
     //Step 11
-    //outFile1 << biMean.plotAll()
+    biMean.plotAll(outFile1);
     
 
     //Step 12
