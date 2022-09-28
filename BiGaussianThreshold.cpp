@@ -15,7 +15,6 @@ class BiMean {
         char **GaussGraph;
 
     BiMean(int rows, int cols, int minv, int maxv){
-        cout << "please" << endl;
         numRows = rows;
         numCols = cols;
         minVal = minv;
@@ -25,7 +24,23 @@ class BiMean {
         dividePt = offSet;
     }
 
+    ~BiMean(){
+        delete[] histAry;
+        delete[] GaussAry;
+        cout << "deleted histogram and gaussian dynamic arrays" << endl;
+        for(int i=0; i<maxHeight+1; i++){
+            delete[] histGraph[i];
+            delete[] GaussGraph[i];
+        }
+        cout << "delete all subarrays in histgraph and gausGraph" << endl;
+        delete[] histGraph;
+        cout << "deleting histGraph memory allocation" << endl;
+        delete[] GaussGraph;
+        cout << "deleting gausGraph memory allocation";
+    }
+
     int loadHist(ifstream& in){
+        
         int retVal = 0;
         while(!in.eof()){
             int x;
@@ -44,8 +59,8 @@ class BiMean {
         histGraph = new char*[maxHeight+1];
         GaussGraph = new char*[maxHeight+1];
         for(int i=0; i<maxHeight; i++){
-            histGraph[i] = new char[maxVal+1];
-            GaussGraph[i] = new char[maxVal+1];
+            histGraph[i] = new char[maxVal+1]();
+            GaussGraph[i] = new char[maxVal+1]();
         }
         GaussAry = new int[maxVal+1];
     }
@@ -54,7 +69,7 @@ class BiMean {
         //maps 1D array onto 2D array with symbol
         //if ary[i] > 0 then graph[i, ary[i]] <- symbol
         //symbol will be * for histGraph and + for GaussGraph
-        for(int i = 0; i<maxVal+1; i++){
+        for(int i = 0; i<maxVal; i++){
             if(ary[i] > 0){
                 int point = (maxHeight+1)-ary[i];
                 for(int j=point; j<maxHeight; j++){
@@ -66,7 +81,7 @@ class BiMean {
 
     void addVertical(int thr){
         //add histGraph[thr, j] with | where j=0 to maxHeight
-        for(int i=0; i<=maxHeight; i++){
+        for(int i=0; i<maxHeight; i++){
             histGraph[i][thr] = '|';
         }
     }
@@ -133,6 +148,7 @@ class BiMean {
         double minSumDiff = 999999.0;
 
         while(dividePt  < (maxVal - offSet)){
+            cout << "while" << " ";
             GaussAry = setZero(GaussAry);
             sum1 = fitGauss(0, dividePt, GaussAry);
             sum2 = fitGauss(dividePt, maxVal, GaussAry);
@@ -215,40 +231,54 @@ int main(int argc, char *argv[]){
     //Step 4
     biMean.plotGraph(biMean.histAry, biMean.histGraph, '*');
     //outFile1 << biMean.histGraph;
-    for(int i=0; i<biMean.maxHeight;i++){
+    for(int i = 0; i<biMean.maxHeight; i++){
         for(int j=0; j<biMean.maxVal; j++){
-            if(biMean.histGraph[i][j] != '*'){cout << " ";}
-            else{
-                cout << biMean.histGraph[i][j];
-            }
+            if((int)biMean.histGraph[i][j]==0) outFile1 << " ";
+            else outFile1 << biMean.histGraph[i][j];
         }
+        outFile1 << endl;
     }
-    cout << "step 4 done " << endl;
+    outFile1 << "Histogram Curve" << endl;
 
-
+    
     //Step 5
     //Done on class BiMean construction
     //offSet and dividePt value assignment
     
     //Step 6
     double bestThrVal = biMean.biMeanGauss(biMean.dividePt, outFile2);
-    cout << "step 6 done" << endl;
+    
     //Step 7
     biMean.bestFitGauss(bestThrVal, biMean.GaussAry);
 
     //Step 8
     biMean.plotGraph(biMean.GaussAry, biMean.GaussGraph, '+');
-    outFile1 << biMean.GaussGraph;
+    //outFile1 << biMean.GaussGraph;
+    for(int i = 0; i<biMean.maxHeight; i++){
+        for(int j=0; j<biMean.maxVal; j++){
+            if((int)biMean.GaussGraph[i][j]==0) outFile1 << " ";
+            else outFile1 << biMean.GaussGraph[i][j];
+        }
+        outFile1 << endl;
+    }
+    outFile1 << "Gaussian Curve" << endl;
 
     //Step 9
-    outFile1 << "Best Threshol Value: " << bestThrVal;
+    outFile1 << "Best Threshol Value: " << bestThrVal << endl;;
 
     //Step 10
     biMean.addVertical(bestThrVal);
-    outFile1 << biMean.histGraph;
+    for(int i = 0; i<biMean.maxHeight; i++){
+        for(int j=0; j<biMean.maxVal; j++){
+            if((int)biMean.histGraph[i][j]==0) outFile1 << " ";
+            else outFile1 << biMean.histGraph[i][j];
+        }
+        outFile1 << endl;
+    }
 
     //Step 11
     //outFile1 << biMean.plotAll()
+    
 
     //Step 12
     inFile.close();
