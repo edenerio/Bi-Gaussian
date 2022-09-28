@@ -57,7 +57,9 @@ class BiMean {
         for(int i = 0; i<maxVal+1; i++){
             if(ary[i] > 0){
                 int point = (maxHeight+1)-ary[i];
-                graph[point][i] = symbol;
+                for(int j=point; j<maxHeight; j++){
+                    graph[j][i] = symbol;
+                }
             }
         }
     }
@@ -65,7 +67,7 @@ class BiMean {
     void addVertical(int thr){
         //add histGraph[thr, j] with | where j=0 to maxHeight
         for(int i=0; i<=maxHeight; i++){
-            histGraph[thr][i] = '|';
+            histGraph[i][thr] = '|';
         }
     }
 
@@ -213,17 +215,15 @@ int main(int argc, char *argv[]){
     //Step 4
     biMean.plotGraph(biMean.histAry, biMean.histGraph, '*');
     //outFile1 << biMean.histGraph;
-    int counter = 0;
     for(int i=0; i<biMean.maxHeight;i++){
         for(int j=0; j<biMean.maxVal; j++){
-            if(biMean.histGraph[i][j] != '*'){outFile1 << " ";}
+            if(biMean.histGraph[i][j] != '*'){cout << " ";}
             else{
-                outFile1 << biMean.histGraph[i][j];
-                counter++;
+                cout << biMean.histGraph[i][j];
             }
         }
     }
-    cout << "step 4 done " << counter << endl;
+    cout << "step 4 done " << endl;
 
 
     //Step 5
