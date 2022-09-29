@@ -184,7 +184,10 @@ class BiMean {
         //overlay histGraph with add vertical line and GaussGraph to File1
         for(int i = 0; i<maxHeight; i++){
             for(int j=0; j<maxVal; j++){
-                if((int)histGraph[i][j]>0 && (int)GaussGraph[i][j]>0){
+                if((int)histGraph[i][j]=='|'){
+                    outFile << histGraph[i][j] << " ";
+                }
+                else if(((int)histGraph[i][j]>0 && (int)GaussGraph[i][j]>0) && (int)histGraph[i][j]!='|'){
                     outFile << 'x' << " ";
                 }else{
                     if((int)histGraph[i][j]>0){
