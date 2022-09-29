@@ -146,21 +146,11 @@ class BiMean {
         double sum1, sum2, total;
         double bestThr = thr;
         double minSumDiff = 999999.0;
-        int count = 1;
 
         while(thr  < (maxVal - offSet)){
-            cout << "iteration#: " << count++ << endl;
             GaussAry = setZero(GaussAry);
             sum1 = fitGauss(0, thr, GaussAry);
-            for(int i=0; i<maxVal; i++){
-                cout << GaussAry[i] << " ";
-            }
-            cout << endl;
             sum2 = fitGauss(thr, maxVal, GaussAry);
-            for(int i=0; i<maxVal; i++){
-                cout << GaussAry[i] << " ";
-            }
-            cout << endl;
             total = sum1+sum2;
             if(total < minSumDiff){
                 minSumDiff = total;
@@ -211,7 +201,6 @@ class BiMean {
                 if((int)histGraph[i][j]==0 && (int)GaussGraph[i][j]==0){
                     outFile << "  ";
                 }
-                //outFile << " ";
             }
             outFile << endl;
         }
@@ -257,7 +246,7 @@ int main(int argc, char *argv[]){
 
     //Step 4
     biMean.plotGraph(biMean.histAry, biMean.histGraph, '*');
-    //outFile1 << biMean.histGraph;
+    outFile1 << "Histogram Curve" << endl;
     for(int i = 0; i<biMean.maxHeight; i++){
         for(int j=0; j<biMean.maxVal; j++){
             if((int)biMean.histGraph[i][j]==0) outFile1 << "  ";
@@ -265,8 +254,13 @@ int main(int argc, char *argv[]){
         }
         outFile1 << endl;
     }
-    outFile1 << "Histogram Curve" << endl;
 
+    //border for output file
+    for(int i=0; i<biMean.maxVal*2; i++){
+        outFile1 << '-';
+    }
+    outFile1 << endl;
+    
     
     //Step 5
     //Done on class BiMean construction
@@ -280,7 +274,7 @@ int main(int argc, char *argv[]){
 
     //Step 8
     biMean.plotGraph(biMean.GaussAry, biMean.GaussGraph, '+');
-    //outFile1 << biMean.GaussGraph;
+    outFile1 << "Gaussian Curve" << endl;
     for(int i = 0; i<biMean.maxHeight; i++){
         for(int j=0; j<biMean.maxVal; j++){
             if((int)biMean.GaussGraph[i][j]==0) outFile1 << "  ";
@@ -288,10 +282,23 @@ int main(int argc, char *argv[]){
         }
         outFile1 << endl;
     }
-    outFile1 << "Gaussian Curve" << endl;
+
+    //border for output file
+    for(int i=0; i<biMean.maxVal*2; i++){
+        outFile1 << '-';
+    }
+    outFile1 << endl;
 
     //Step 9
-    outFile1 << "Best Threshol Value: " << bestThrVal << endl;;
+    outFile1 << "Best Threshol Value: " << bestThrVal << endl;
+
+    //border for output file
+    for(int i=0; i<biMean.maxVal*2; i++){
+        outFile1 << '-';
+    }
+    outFile1 << endl;
+
+    outFile1 << "Histogram curve with a vertical line at the selected threshold" << endl;
 
     //Step 10
     biMean.addVertical(bestThrVal);
@@ -303,9 +310,17 @@ int main(int argc, char *argv[]){
         outFile1 << endl;
     }
 
+    //border for output file
+    for(int i=0; i<biMean.maxVal*2; i++){
+        outFile1 << '-';
+    }
+    outFile1 << endl;
+
+    outFile1 << "Histogram Curve and two best-fitted Gaussian curves" << endl;
+
     //Step 11
     biMean.plotAll(outFile1);
-    
+
 
     //Step 12
     inFile.close();
