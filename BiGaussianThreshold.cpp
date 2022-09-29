@@ -221,7 +221,6 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    //ifstream inFile(argv[1]);
     ifstream inFile;
     inFile.open(argv[1]);
 
