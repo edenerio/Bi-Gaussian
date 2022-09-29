@@ -31,16 +31,12 @@ class BiMean {
     ~BiMean(){
         delete[] histAry;
         delete[] GaussAry;
-        cout << "deleted histogram and gaussian dynamic arrays" << endl;
         for(int i=0; i<maxHeight+1; i++){
             delete[] histGraph[i];
             delete[] GaussGraph[i];
         }
-        cout << "delete all subarrays in histgraph and gausGraph" << endl;
         delete[] histGraph;
-        cout << "deleting histGraph memory allocation" << endl;
         delete[] GaussGraph;
-        cout << "deleting gausGraph memory allocation";
     }
 
     int loadHist(ifstream& in){
