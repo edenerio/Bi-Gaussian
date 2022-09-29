@@ -2,7 +2,7 @@
 #include <fstream>
 #include <math.h>
 #include <tgmath.h>
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -180,6 +180,14 @@ class BiMean {
         sum2 = fitGauss(bestThr, maxVal, arr);
     }
 
+    void makeBorder(char symbol, ofstream& outfile){
+        //border for output file
+        for(int i=0; i<maxVal*2; i++){
+            outfile << symbol;
+        }
+        outfile << endl;
+    }
+
     void plotAll(ofstream& outFile){
         //overlay histGraph with add vertical line and GaussGraph to File1
         for(int i = 0; i<maxHeight; i++){
@@ -253,13 +261,8 @@ int main(int argc, char *argv[]){
         }
         outFile1 << endl;
     }
-
-    //border for output file
-    for(int i=0; i<biMean.maxVal*2; i++){
-        outFile1 << '-';
-    }
-    outFile1 << endl;
     
+    biMean.makeBorder('-', outFile1);
     
     //Step 5
     //Done on class BiMean construction
@@ -282,20 +285,12 @@ int main(int argc, char *argv[]){
         outFile1 << endl;
     }
 
-    //border for output file
-    for(int i=0; i<biMean.maxVal*2; i++){
-        outFile1 << '-';
-    }
-    outFile1 << endl;
+    biMean.makeBorder('-', outFile1);
 
     //Step 9
     outFile1 << "Best Threshol Value: " << bestThrVal << endl;
 
-    //border for output file
-    for(int i=0; i<biMean.maxVal*2; i++){
-        outFile1 << '-';
-    }
-    outFile1 << endl;
+    biMean.makeBorder('-',outFile1);
 
     outFile1 << "Histogram curve with a vertical line at the selected threshold" << endl;
 
@@ -309,11 +304,7 @@ int main(int argc, char *argv[]){
         outFile1 << endl;
     }
 
-    //border for output file
-    for(int i=0; i<biMean.maxVal*2; i++){
-        outFile1 << '-';
-    }
-    outFile1 << endl;
+    biMean.makeBorder('-',outFile1);
 
     outFile1 << "Histogram Curve and two best-fitted Gaussian curves" << endl;
 

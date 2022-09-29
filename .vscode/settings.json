@@ -4,6 +4,8 @@
         "iosfwd": "cpp",
         "fstream": "cpp",
         "ostream": "cpp",
-        "new": "cpp"
+        "new": "cpp",
+        "__locale": "cpp",
+        "ios": "cpp"
     }
 }
